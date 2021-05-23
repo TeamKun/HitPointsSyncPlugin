@@ -1,0 +1,6 @@
+name: HitPointsSyncPlugin
+version: ${project.version}
+main: net.kunmc.lab.hitpointssyncplugin.HitPointsSyncPlugin
+api-version: 1.16
+authors: [Peyang]
+description: Sync sync sync!!!
