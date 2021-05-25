@@ -1,6 +1,5 @@
 package net.kunmc.lab.hitpointssyncplugin.commands;
 
-import net.kunmc.lab.hitpointssyncplugin.HPManager;
 import net.kunmc.lab.hitpointssyncplugin.HitPointsSyncPlugin;
 import net.kunmc.lab.hitpointssyncplugin.Utils;
 import net.md_5.bungee.api.ChatColor;
