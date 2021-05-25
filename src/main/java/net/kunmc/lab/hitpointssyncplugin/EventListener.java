@@ -1,10 +1,12 @@
 package net.kunmc.lab.hitpointssyncplugin;
 
+import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -47,6 +49,31 @@ public class EventListener implements Listener
             return;
 
         manager.applyDamage((Player) e.getEntity(), e.getCause(), e.getFinalDamage());
+    }
+
+    @EventHandler
+    public static void onRegen(EntityRegainHealthEvent e)
+    {
+        if (!(e.getEntity() instanceof Player))
+            return;
+
+        HPManager manager = Utils.getManager((Player) e.getEntity());
+
+        if (manager == null || !manager.isStarted())
+            return;
+
+        boolean regenSuccess = manager.regen(e.getAmount());
+
+        if (!regenSuccess && e.getRegainReason() == EntityRegainHealthEvent.RegainReason.EATING)
+        {
+            e.getEntity().sendMessage(ChatColor.RED + "回復はクールダウン中です。");
+            e.setCancelled(true);
+            return;
+        }
+
+        if (!regenSuccess)
+            e.setCancelled(true);
+        e.setAmount(0);
     }
 
 }
