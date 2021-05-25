@@ -13,8 +13,13 @@ public class EventListener implements Listener
     @EventHandler
     public static void onJoin(PlayerJoinEvent e)
     {
+
+        HPManager manager = Utils.getManager(e.getPlayer());
+
+        if (manager == null || !manager.isStarted())
+            return;
         e.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
-                .setBaseValue(Utils.getManager(e.getPlayer()).getMaxHP());
+                .setBaseValue(manager.getMaxHP());
     }
 
     @EventHandler
@@ -33,9 +38,15 @@ public class EventListener implements Listener
         if (e.getFinalDamage() < 1.0d)
             return;
 
+        if (e.getCause() == EntityDamageEvent.DamageCause.SUICIDE)
+            return;
+
         HPManager manager = Utils.getManager((Player) e.getEntity());
 
-        manager.applyDamage((Player) e.getEntity(), e.getCause());
+        if (manager == null || !manager.isStarted())
+            return;
+
+        manager.applyDamage((Player) e.getEntity(), e.getCause(), e.getFinalDamage());
     }
 
 }

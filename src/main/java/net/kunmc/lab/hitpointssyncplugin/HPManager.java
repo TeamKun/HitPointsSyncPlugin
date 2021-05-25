@@ -7,6 +7,9 @@ import net.minecraft.server.v1_16_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -15,17 +18,23 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import javax.xml.soap.Text;
+import java.util.Objects;
+
 public class HPManager
 {
     private static Scoreboard mainScoreboard;
 
     private final String name;
-
     private final Team team;
+    private BossBar bar;
 
     private int maxHP;
-
     private int regenPerMinute;
+    private int regendHP;
+    private double nowHP;
+
+    private boolean started;
 
     static
     {
@@ -49,6 +58,33 @@ public class HPManager
         }
 
         this.maxHP = 20;
+        this.nowHP = this.maxHP;
+        this.regendHP = 0;
+        this.started = false;
+        this.bar = Bukkit.createBossBar("残り回復可能HP", BarColor.GREEN, BarStyle.SEGMENTED_20);
+        this.bar.setProgress(1.0);
+    }
+
+    public void start()
+    {
+        this.team.getEntries().stream()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .forEach(player -> {
+                    this.bar.addPlayer(player);
+                    player.setHealth(this.maxHP);
+                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH)
+                            .setBaseValue(this.maxHP);
+                });
+
+        this.bar.setVisible(true);
+
+        this.started = true;
+    }
+
+    public boolean isStarted()
+    {
+        return started;
     }
 
     public int getMaxHP()
@@ -58,30 +94,86 @@ public class HPManager
 
     public void setMaxHP(int maxHP)
     {
+        this.nowHP = maxHP;
         team.getEntries()
                 .forEach(s -> {
                     Player player = Bukkit.getPlayer(s);
                     if (player != null)
+                    {
                         player.getAttribute(Attribute.GENERIC_MAX_HEALTH)
                                 .setBaseValue(maxHP);
+                        player.setHealth(this.nowHP);
+                    }
                 });
         this.maxHP = maxHP;
     }
 
-    public void applyDamage(Player damager, EntityDamageEvent.DamageCause cause) // damager => 戦犯
+    public void applyDamage(Player damager, EntityDamageEvent.DamageCause cause, double amount) // damager => 戦犯
     {
         damager.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 100, 1));
 
-        String message = damager.getName() + "は" + Utils.toMessage(damager, cause) + "ダメージを負った";
+        String message = damager.getName() + "は" + Utils.toMessage(damager, cause) + "ダメージを負った。";
+
+        if (nowHP - amount <= 0)
+        {
+            team.getEntries()
+                    .forEach(s -> {
+                        Player player = Bukkit.getPlayer(s);
+                        if (player == null)
+                            return;
+                        player.setHealth(0);
+                    });
+
+            this.nowHP = 0;
+
+            Bukkit.broadcast(Component.text(ChatColor.RED + team.getName() + " チームは、" + damager.getName() + "が負ったダメージで全滅した。").asComponent(), "");
+            stop();
+        }
 
         team.getEntries()
                 .forEach(s -> {
                     Player player = Bukkit.getPlayer(s);
                     if (player == null)
                         return;
+                    player.setHealth(player.getHealth() - amount);
                     notification(player, message);
                 });
     }
+
+    public void stop()
+    {
+        this.started = false;
+        this.bar.setVisible(false);
+        this.bar.removeAll();
+    }
+
+    public boolean regen(double amount)
+    {
+        if (!this.started || this.regendHP + amount > this.regenPerMinute)
+            return false;
+
+        double regenAmount = amount;
+
+        if (this.nowHP + amount < this.maxHP)
+        {
+            this.regendHP += this.maxHP - this.nowHP;
+            regenAmount = this.maxHP - this.nowHP;
+        }
+        else
+            this.regendHP += amount;
+
+        double finalRegenAmount = regenAmount;
+        team.getEntries()
+                .forEach(s -> {
+                    Player player = Bukkit.getPlayer(s);
+                    if (player != null)
+                        player.setHealth(this.nowHP + finalRegenAmount);
+                });
+
+        this.nowHP = this.nowHP + finalRegenAmount;
+        return true;
+    }
+
 
     private static void notification(Player player, String message)
     {
@@ -101,6 +193,13 @@ public class HPManager
 
     public void setRegenPerMinute(int regenPerMinute)
     {
+        double progress = this.bar.getProgress() * this.regenPerMinute;
+
         this.regenPerMinute = regenPerMinute;
+
+        if (this.bar.getProgress() == 0.0 || regenPerMinute == 0.0)
+            return;
+
+        this.bar.setProgress(progress / regenPerMinute);
     }
 }
