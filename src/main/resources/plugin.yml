@@ -4,3 +4,18 @@ main: net.kunmc.lab.hitpointssyncplugin.HitPointsSyncPlugin
 api-version: 1.16
 authors: [Peyang]
 description: Sync sync sync!!!
+
+commands:
+  hpsync:
+    description: HPSyncPluginのメインコマンドです。
+    usage: /hpsync <引数>
+
+permissions:
+  hpsync:
+    description: HPSyncPluginのメインパーミッションです。
+    children:
+      hpsync.admin: HPSyncの管理コマンド権限です。
+    default: op
+  hpsync.admin:
+    description: HPSyncの管理コマンド権限です。
+    default: op
