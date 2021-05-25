@@ -25,6 +25,8 @@ public class HPManager
 
     private int maxHP;
 
+    private int regenPerMinute;
+
     static
     {
         mainScoreboard = Bukkit.getServer().getScoreboardManager().getMainScoreboard();
@@ -90,5 +92,15 @@ public class HPManager
         PlayerConnection connection = playerEntity.playerConnection;
 
         connection.sendPacket(new PacketPlayOutAnimation(playerEntity, 1));
+    }
+
+    public int getRegenPerMinute()
+    {
+        return regenPerMinute;
+    }
+
+    public void setRegenPerMinute(int regenPerMinute)
+    {
+        this.regenPerMinute = regenPerMinute;
     }
 }
