@@ -27,6 +27,17 @@ public class Utils
             return null;
         }
     }
+    public static Double parseDouble(String str)
+    {
+        try
+        {
+            return Double.valueOf(str);
+        }
+        catch (Exception ignored)
+        {
+            return null;
+        }
+    }
 
     public static String toMessage(Player damager, EntityDamageEvent.DamageCause cause)
     {

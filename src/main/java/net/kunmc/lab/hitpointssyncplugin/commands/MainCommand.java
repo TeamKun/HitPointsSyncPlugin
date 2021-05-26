@@ -91,6 +91,9 @@ public class MainCommand implements CommandExecutor, TabCompleter
                 HitPointsSyncPlugin.started = false;
                 sender.sendMessage(ChatColor.GREEN + "ゲームをストップしました。");
                 break;
+            default:
+                sender.sendMessage(ChatColor.RED + "エラー：不明な引数です。/hpsync help をご利用ください。");
+
         }
 
         return true;

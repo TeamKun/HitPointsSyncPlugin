@@ -1,9 +1,6 @@
 package net.kunmc.lab.hitpointssyncplugin;
 
 import net.kyori.adventure.text.Component;
-import net.minecraft.server.v1_16_R3.EntityPlayer;
-import net.minecraft.server.v1_16_R3.PacketPlayOutAnimation;
-import net.minecraft.server.v1_16_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.EntityEffect;
@@ -11,7 +8,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
@@ -29,7 +25,7 @@ public class HPManager
     private final Team team;
     private BossBar bar;
 
-    private int maxHP;
+    private double maxHP;
     private int regenPerMinute;
     private int regendHP;
     private double nowHP;
@@ -92,12 +88,12 @@ public class HPManager
         return started;
     }
 
-    public int getMaxHP()
+    public double getMaxHP()
     {
         return maxHP;
     }
 
-    public void setMaxHP(int maxHP)
+    public void setMaxHP(double maxHP)
     {
         this.nowHP = maxHP;
         team.getEntries()
