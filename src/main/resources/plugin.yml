@@ -14,7 +14,7 @@ permissions:
   hpsync:
     description: HPSyncPluginのメインパーミッションです。
     children:
-      hpsync.admin: HPSyncの管理コマンド権限です。
+      hpsync.admin: true
     default: op
   hpsync.admin:
     description: HPSyncの管理コマンド権限です。

@@ -1,5 +1,6 @@
 package net.kunmc.lab.hitpointssyncplugin.commands;
 
+import net.kunmc.lab.hitpointssyncplugin.HPManager;
 import net.kunmc.lab.hitpointssyncplugin.HitPointsSyncPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -45,13 +46,51 @@ public class MainCommand implements CommandExecutor, TabCompleter
                 sender.sendMessage(genHelpText("healspeed", "1分間に回復するハートの数をセットします。"));
                 break;
             case "maxhp":
+                if (HitPointsSyncPlugin.started)
+                {
+                    sender.sendMessage(ChatColor.RED + "エラー：既に開始しています。先に、/hpsync stop を実行してください。");
+                    return true;
+                }
                 MaxHPCommand.maxhp(sender, (String[]) ArrayUtils.remove(args, 0));
                 break;
             case "register":
+                if (HitPointsSyncPlugin.started)
+                {
+                    sender.sendMessage(ChatColor.RED + "エラー：既に開始しています。先に、/hpsync stop を実行してください。");
+                    return true;
+                }
                 RegisterCommand.register(sender, (String[]) ArrayUtils.remove(args, 0));
                 break;
             case "healspeed":
-                    HealSpeed.healspeed(sender, (String[]) ArrayUtils.remove(args, 0));
+                if (HitPointsSyncPlugin.started)
+                {
+                    sender.sendMessage(ChatColor.RED + "エラー：既に開始しています。先に、/hpsync stop を実行してください。");
+                    return true;
+                }
+                HealSpeed.healspeed(sender, (String[]) ArrayUtils.remove(args, 0));
+                break;
+            case "start":
+                if (HitPointsSyncPlugin.started)
+                {
+                    sender.sendMessage(ChatColor.RED + "エラー：既に開始しています。");
+                    return true;
+                }
+
+                HitPointsSyncPlugin.started = true;
+                HitPointsSyncPlugin.managers.values().forEach(HPManager::start);
+                sender.sendMessage(ChatColor.GREEN + "ゲームを開始しました。");
+                break;
+            case "stop":
+                if (!HitPointsSyncPlugin.started)
+                {
+                    sender.sendMessage(ChatColor.RED + "エラー：まだ開始していません。");
+                    return true;
+                }
+
+                HitPointsSyncPlugin.managers.values().forEach(HPManager::stop);
+                HitPointsSyncPlugin.started = false;
+                sender.sendMessage(ChatColor.GREEN + "ゲームをストップしました。");
+                break;
         }
 
         return true;
@@ -76,10 +115,10 @@ public class MainCommand implements CommandExecutor, TabCompleter
 
         switch (args.length)
         {
-            case 0:
-                result.addAll(Arrays.asList("help", "maxhp", "register", "healspeed"));
-                break;
             case 1:
+                result.addAll(Arrays.asList("help", "maxhp", "register", "healspeed", "start", "stop"));
+                break;
+            case 2:
                 switch (args[0])
                 {
                     case "register":

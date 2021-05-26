@@ -18,7 +18,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import javax.xml.soap.Text;
 import java.util.Objects;
 
 public class HPManager
@@ -61,8 +60,7 @@ public class HPManager
         this.nowHP = this.maxHP;
         this.regendHP = 0;
         this.started = false;
-        this.bar = Bukkit.createBossBar("残り回復可能HP", BarColor.GREEN, BarStyle.SEGMENTED_20);
-        this.bar.setProgress(1.0);
+        this.bar = Bukkit.createBossBar("残り回復可能HP", BarColor.GREEN, BarStyle.SOLID);
     }
 
     public void start()
@@ -78,6 +76,12 @@ public class HPManager
                 });
 
         this.bar.setVisible(true);
+        if (getRegenPerMinute() == 0)
+            this.bar.setProgress(0.0);
+        else
+            this.bar.setProgress(1.0);
+
+        this.nowHP = this.maxHP;
 
         this.started = true;
     }
@@ -110,6 +114,11 @@ public class HPManager
 
     public void applyDamage(Player damager, EntityDamageEvent.DamageCause cause, double amount) // damager => 戦犯
     {
+        EntityPlayer playerEntity = ((CraftPlayer) damager).getHandle();
+
+        PlayerConnection connection = playerEntity.playerConnection;
+
+        connection.sendPacket(new PacketPlayOutAnimation(playerEntity, 1));
         damager.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 100, 1));
 
         String message = damager.getName() + "は" + Utils.toMessage(damager, cause) + "ダメージを負った。";
@@ -130,12 +139,16 @@ public class HPManager
             stop();
         }
 
+        this.nowHP = nowHP - amount;
+
         team.getEntries()
                 .forEach(s -> {
                     Player player = Bukkit.getPlayer(s);
                     if (player == null)
                         return;
-                    player.setHealth(player.getHealth() - amount);
+                    if (this.nowHP < 0)
+                        return;
+                    player.setHealth(this.nowHP);
                     notification(player, message);
                 });
     }
@@ -150,11 +163,11 @@ public class HPManager
     public boolean regen(double amount)
     {
         if (!this.started || this.regendHP + amount > this.regenPerMinute)
-            return false;
+              return false;
 
         double regenAmount = amount;
 
-        if (this.nowHP + amount < this.maxHP)
+        if (this.nowHP + amount > this.maxHP)
         {
             this.regendHP += this.maxHP - this.nowHP;
             regenAmount = this.maxHP - this.nowHP;
@@ -171,6 +184,7 @@ public class HPManager
                 });
 
         this.nowHP = this.nowHP + finalRegenAmount;
+        this.bar.setProgress(1.0 - ((double) regendHP / (double) regenPerMinute));
         return true;
     }
 

@@ -1,5 +1,6 @@
 package net.kunmc.lab.hitpointssyncplugin;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -17,6 +18,13 @@ public class EventListener implements Listener
     {
 
         HPManager manager = Utils.getManager(e.getPlayer());
+
+        if (manager == null)
+        {
+            Bukkit.getScoreboardManager().getMainScoreboard().getTeam("main").addEntry(e.getPlayer().getName());
+            manager = Utils.getManager(e.getPlayer());
+        }
+
 
         if (manager == null || !manager.isStarted())
             return;
@@ -40,6 +48,7 @@ public class EventListener implements Listener
         if (e.getFinalDamage() < 1.0d)
             return;
 
+
         if (e.getCause() == EntityDamageEvent.DamageCause.SUICIDE)
             return;
 
@@ -48,6 +57,7 @@ public class EventListener implements Listener
         if (manager == null || !manager.isStarted())
             return;
 
+        e.setCancelled(true);
         manager.applyDamage((Player) e.getEntity(), e.getCause(), e.getFinalDamage());
     }
 
