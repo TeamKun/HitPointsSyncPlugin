@@ -6,6 +6,7 @@ import net.minecraft.server.v1_16_R3.PacketPlayOutAnimation;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.EntityEffect;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -135,7 +136,7 @@ public class HPManager
 
             this.nowHP = 0;
 
-            Bukkit.broadcast(Component.text(ChatColor.RED + team.getName() + " チームは、" + damager.getName() + "が負ったダメージで全滅した。").asComponent(), "");
+            Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.RED + team.getName() + " チームは、" + damager.getName() + "が負ったダメージで全滅した。"));
             stop();
         }
 
@@ -150,10 +151,6 @@ public class HPManager
                         return;
 
                     player.setHealth(this.nowHP);
-                    EntityPlayer playerEntity = ((CraftPlayer) player).getHandle();
-                    PlayerConnection connection = playerEntity.playerConnection;
-                    connection.sendPacket(new PacketPlayOutAnimation(playerEntity, 1));
-
                     notification(player, message);
                 });
     }
@@ -163,6 +160,7 @@ public class HPManager
         this.started = false;
         this.bar.setVisible(false);
         this.bar.removeAll();
+        this.regendHP = 0;
     }
 
     public boolean regen(double amount)
@@ -198,11 +196,7 @@ public class HPManager
     {
         player.sendActionBar(Component.text(ChatColor.RED + message));
 
-        EntityPlayer playerEntity = ((CraftPlayer) player).getHandle();
-
-        PlayerConnection connection = playerEntity.playerConnection;
-
-        connection.sendPacket(new PacketPlayOutAnimation(playerEntity, 1));
+        player.playEffect(EntityEffect.HURT);
     }
 
     public int getRegenPerMinute()
@@ -219,6 +213,6 @@ public class HPManager
         if (this.bar.getProgress() == 0.0 || regenPerMinute == 0.0)
             return;
 
-        this.bar.setProgress(progress / regenPerMinute);
+        this.bar.setProgress(progress / (double) regenPerMinute);
     }
 }
