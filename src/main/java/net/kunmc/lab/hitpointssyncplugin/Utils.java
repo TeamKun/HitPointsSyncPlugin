@@ -46,7 +46,7 @@ public class Utils
                     return "";
                 EntityDamageByEntityEvent evt =
                         (EntityDamageByEntityEvent) damager.getLastDamageCause();
-                return evt.getDamager().getName() + "に殴られて";
+                return /*evt.getDamager().getName() + */"殴られて";
             case ENTITY_EXPLOSION:
                 return "クリーパーの爆発で";
             case FALL:

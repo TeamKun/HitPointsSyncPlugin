@@ -57,8 +57,8 @@ public class EventListener implements Listener
         if (manager == null || !manager.isStarted())
             return;
 
-        e.setCancelled(true);
         manager.applyDamage((Player) e.getEntity(), e.getCause(), e.getFinalDamage());
+        e.setDamage(0.0);
     }
 
     @EventHandler

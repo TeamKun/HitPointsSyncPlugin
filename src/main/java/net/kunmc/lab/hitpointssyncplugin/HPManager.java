@@ -114,11 +114,11 @@ public class HPManager
 
     public void applyDamage(Player damager, EntityDamageEvent.DamageCause cause, double amount) // damager => 戦犯
     {
-        EntityPlayer playerEntity = ((CraftPlayer) damager).getHandle();
+        /*EntityPlayer playerEntity = ((CraftPlayer) damager).getHandle();
 
         PlayerConnection connection = playerEntity.playerConnection;
 
-        connection.sendPacket(new PacketPlayOutAnimation(playerEntity, 1));
+        connection.sendPacket(new PacketPlayOutAnimation(playerEntity, 1));*/
         damager.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 100, 1));
 
         String message = damager.getName() + "は" + Utils.toMessage(damager, cause) + "ダメージを負った。";
@@ -148,7 +148,12 @@ public class HPManager
                         return;
                     if (this.nowHP < 0)
                         return;
+
                     player.setHealth(this.nowHP);
+                    EntityPlayer playerEntity = ((CraftPlayer) player).getHandle();
+                    PlayerConnection connection = playerEntity.playerConnection;
+                    connection.sendPacket(new PacketPlayOutAnimation(playerEntity, 1));
+
                     notification(player, message);
                 });
     }
