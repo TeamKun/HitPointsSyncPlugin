@@ -2,8 +2,8 @@ package net.kunmc.lab.hitpointssyncplugin.commands;
 
 import net.kunmc.lab.hitpointssyncplugin.HPManager;
 import net.kunmc.lab.hitpointssyncplugin.HitPointsSyncPlugin;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -31,6 +31,7 @@ public class RegisterCommand
         if (HitPointsSyncPlugin.managers.get(team.getName()) == null)
         {
             sender.sendMessage(ChatColor.RED + "エラー：チームは既に登録されています。");
+            return;
         }
 
         HitPointsSyncPlugin.managers.put(team.getName(), new HPManager(team));

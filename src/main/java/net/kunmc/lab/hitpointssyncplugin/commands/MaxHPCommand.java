@@ -2,7 +2,7 @@ package net.kunmc.lab.hitpointssyncplugin.commands;
 
 import net.kunmc.lab.hitpointssyncplugin.HitPointsSyncPlugin;
 import net.kunmc.lab.hitpointssyncplugin.Utils;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class MaxHPCommand
