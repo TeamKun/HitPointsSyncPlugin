@@ -44,6 +44,8 @@ public class MainCommand implements CommandExecutor, TabCompleter
                 sender.sendMessage(genHelpText("help", "このコマンドです。"));
                 sender.sendMessage(genHelpText("maxhp", "プレイヤの最大HPをセットします。"));
                 sender.sendMessage(genHelpText("healspeed", "1分間に回復するハートの数をセットします。"));
+                sender.sendMessage(genHelpText("register", "追跡するチームに追加します。"));
+                sender.sendMessage(genHelpText("ranking", "ランキング関連のコマンドです。"));
                 break;
             case "maxhp":
                 if (HitPointsSyncPlugin.started)
