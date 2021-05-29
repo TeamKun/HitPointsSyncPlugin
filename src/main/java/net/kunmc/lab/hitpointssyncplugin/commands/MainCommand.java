@@ -91,6 +91,9 @@ public class MainCommand implements CommandExecutor, TabCompleter
                 HitPointsSyncPlugin.started = false;
                 sender.sendMessage(ChatColor.GREEN + "ゲームをストップしました。");
                 break;
+            case "ranking":
+                RankingCommand.ranking(sender, (String[]) ArrayUtils.remove(args, 0));
+                break;
             default:
                 sender.sendMessage(ChatColor.RED + "エラー：不明な引数です。/hpsync help をご利用ください。");
 
@@ -119,7 +122,7 @@ public class MainCommand implements CommandExecutor, TabCompleter
         switch (args.length)
         {
             case 1:
-                result.addAll(Arrays.asList("help", "maxhp", "register", "healspeed", "start", "stop"));
+                result.addAll(Arrays.asList("help", "maxhp", "register", "healspeed", "start", "stop", "ranking"));
                 break;
             case 2:
                 switch (args[0])
@@ -134,6 +137,12 @@ public class MainCommand implements CommandExecutor, TabCompleter
                         result.addAll(HitPointsSyncPlugin.managers.keySet());
                         result.add("all");
                         result.add("*");
+                        break;
+                    case "ranking":
+                        result.add("regen");
+                        result.add("damage");
+                        result.add("none");
+                        result.add("clear");
                         break;
                 }
         }

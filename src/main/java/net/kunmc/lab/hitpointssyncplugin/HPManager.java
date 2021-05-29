@@ -111,15 +111,10 @@ public class HPManager
 
     public void applyDamage(Player damager, EntityDamageEvent.DamageCause cause, double amount) // damager => 戦犯
     {
-        /*EntityPlayer playerEntity = ((CraftPlayer) damager).getHandle();
-
-        PlayerConnection connection = playerEntity.playerConnection;
-
-        connection.sendPacket(new PacketPlayOutAnimation(playerEntity, 1));*/
         damager.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 100, 1));
 
         String message = damager.getName() + "は" + Utils.toMessage(damager, cause) + "ダメージを負った。";
-
+        Ranking.push(Ranking.Mode.DAMAGE, damager.getName(), (int) Math.round(amount));
         if (nowHP - amount <= 0)
         {
             team.getEntries()
@@ -159,7 +154,7 @@ public class HPManager
         this.regendHP = 0;
     }
 
-    public boolean regen(double amount)
+    public boolean regen(String regenner, double amount)
     {
         if (!this.started || this.regendHP + amount > this.regenPerMinute)
               return false;
@@ -173,6 +168,8 @@ public class HPManager
         }
         else
             this.regendHP += amount;
+
+        Ranking.push(Ranking.Mode.REGEN, regenner, (int) Math.round(amount));
 
         double finalRegenAmount = regenAmount;
         team.getEntries()

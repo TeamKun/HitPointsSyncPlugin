@@ -72,7 +72,7 @@ public class EventListener implements Listener
         if (manager == null || !manager.isStarted())
             return;
 
-        boolean regenSuccess = manager.regen(e.getAmount());
+        boolean regenSuccess = manager.regen(e.getEntity().getName(), e.getAmount());
 
         if (!regenSuccess && e.getRegainReason() == EntityRegainHealthEvent.RegainReason.EATING)
         {
