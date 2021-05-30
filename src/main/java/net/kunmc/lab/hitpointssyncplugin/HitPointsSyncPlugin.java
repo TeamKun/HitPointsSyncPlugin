@@ -15,9 +15,12 @@ public final class HitPointsSyncPlugin extends JavaPlugin
 
     public static boolean started;
 
+    public static HitPointsSyncPlugin instance;
+
     @Override
     public void onEnable()
     {
+        instance = this;
         getCommand("hpsync").setExecutor(new MainCommand());
         getCommand("hpsync").setTabCompleter(new MainCommand());
         Bukkit.getPluginManager().registerEvents(new EventListener(), this);

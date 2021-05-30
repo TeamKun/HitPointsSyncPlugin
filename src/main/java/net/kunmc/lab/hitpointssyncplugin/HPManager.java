@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -24,6 +25,7 @@ public class HPManager
     private final String name;
     private final Team team;
     private BossBar bar;
+    private BukkitRunnable healTimer;
 
     private double maxHP;
     private int regenPerMinute;
@@ -58,6 +60,16 @@ public class HPManager
         this.regendHP = 0;
         this.started = false;
         this.bar = Bukkit.createBossBar("残り回復可能HP", BarColor.GREEN, BarStyle.SOLID);
+
+        healTimer = new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                regendHP = 0;
+                bar.setProgress(1.0);
+            }
+        };
     }
 
     public void start()
@@ -80,6 +92,7 @@ public class HPManager
 
         this.nowHP = this.maxHP;
 
+        healTimer.runTaskTimer(HitPointsSyncPlugin.instance, 0L, 1200L);
         this.started = true;
     }
 
@@ -152,6 +165,7 @@ public class HPManager
         this.bar.setVisible(false);
         this.bar.removeAll();
         this.regendHP = 0;
+        this.healTimer.cancel();
     }
 
     public boolean regen(String regenner, double amount)
