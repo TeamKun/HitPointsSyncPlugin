@@ -10,7 +10,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -173,31 +172,32 @@ public class HPManager
 
     class HealRunnable extends BukkitRunnable
     {
-        public volatile int time = 0;
+        public int time = 0;
         @Override
         public void run()
         {
             if (time > 3)
                 healing = false;
+            else
+                time++;
         }
     }
 
     public HealRunnable healRunnable = new HealRunnable();
 
-    public boolean regen(String regenner)
+    public void regen(String regenner)
     {
         if (!this.started)
-              return false;
+              return;
         if (healing)
         {
             healRunnable.time = 0;
-            return true;
+            return;
         }
         healing = true;
 
         healRunnable.runTaskTimer(HitPointsSyncPlugin.instance, 0L, 20L);
 
-        return true;
     }
 
 
