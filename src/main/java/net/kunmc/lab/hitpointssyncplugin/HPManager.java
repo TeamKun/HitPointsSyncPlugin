@@ -160,9 +160,9 @@ public class HPManager
     public void stop()
     {
         this.started = false;
-        if (Bukkit.getScheduler().isCurrentlyRunning(healTimerId))
+        if (Bukkit.getScheduler().isQueued(healTimerId))
             Bukkit.getScheduler().cancelTask(healTimerId);
-        if (Bukkit.getScheduler().isCurrentlyRunning(healRunnableId))
+        if (Bukkit.getScheduler().isQueued(healRunnableId))
             Bukkit.getScheduler().cancelTask(healRunnableId);
 
         HitPointsSyncPlugin.activeManagers.remove(name);
@@ -184,6 +184,7 @@ public class HPManager
             if (time > 3)
             {
                 healing = false;
+                time = 0;
                 Bukkit.getScheduler().cancelTask(healRunnableId);
             }
             else
@@ -226,7 +227,7 @@ public class HPManager
         if (!started)
             return;
 
-        if (Bukkit.getScheduler().isCurrentlyRunning(healTimerId))
+        if (Bukkit.getScheduler().isQueued(healTimerId))
             Bukkit.getScheduler().cancelTask(healTimerId);
         healTimerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(HitPointsSyncPlugin.instance, healTimer, 0L, this.regenAmount);
     }
