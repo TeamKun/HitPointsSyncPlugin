@@ -160,7 +160,10 @@ public class HPManager
     public void stop()
     {
         this.started = false;
-        Bukkit.getScheduler().cancelTask(healTimerId);
+        if (Bukkit.getScheduler().isCurrentlyRunning(healTimerId))
+            Bukkit.getScheduler().cancelTask(healTimerId);
+        if (Bukkit.getScheduler().isCurrentlyRunning(healRunnableId))
+            Bukkit.getScheduler().cancelTask(healRunnableId);
 
         HitPointsSyncPlugin.activeManagers.remove(name);
         if (HitPointsSyncPlugin.activeManagers.size() == 0)
@@ -219,5 +222,12 @@ public class HPManager
     public void setRegenAmount(double regenAmount)
     {
         this.regenAmount = (int) (regenAmount * 20d);
+
+        if (!started)
+            return;
+
+        if (Bukkit.getScheduler().isCurrentlyRunning(healTimerId))
+            Bukkit.getScheduler().cancelTask(healTimerId);
+        healTimerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(HitPointsSyncPlugin.instance, healTimer, 0L, this.regenAmount);
     }
 }
