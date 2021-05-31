@@ -22,9 +22,7 @@ public class Ranking
     {
         if ((damage = mainScoreboard.getObjective("damage")) == null)
             damage = mainScoreboard.registerNewObjective("damage", "dummy", Component.text("食らったダメージ量"));
-        if ((regen = mainScoreboard.getObjective("regen")) == null)
-            regen = mainScoreboard.registerNewObjective("regen", "dummy", Component.text("回復した量"));
-    }
+ }
 
     public static void show(Mode mode)
     {
@@ -33,8 +31,6 @@ public class Ranking
             case DAMAGE:
                 damage.setDisplaySlot(DisplaySlot.SIDEBAR);
                 break;
-            case REGEN:
-                regen.setDisplaySlot(DisplaySlot.SIDEBAR);
         }
     }
 
@@ -54,15 +50,11 @@ public class Ranking
                 Score score = damage.getScore(playerName);
                 score.setScore(score.getScore() + amount);
                 break;
-            case REGEN:
-                score = regen.getScore(playerName);
-                score.setScore(score.getScore() + amount);
         }
     }
 
     public enum Mode
     {
-        DAMAGE,
-        REGEN
+        DAMAGE
     }
 }

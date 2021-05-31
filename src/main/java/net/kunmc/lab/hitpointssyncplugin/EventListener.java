@@ -70,7 +70,7 @@ public class EventListener implements Listener
 
         if (manager == null || !manager.isStarted())
             return;
-        manager.regen(e.getEntity().getName());
+        manager.regen();
         e.setAmount(0);
     }
 

@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -21,11 +20,12 @@ public class HPManager
 
     private final String name;
     private final Team team;
-    private BukkitRunnable healTimer;
+    private Runnable healTimer;
 
     private double maxHP;
     private int regenAmount;
     private double nowHP;
+    private int healTimerId = -1;
 
     private boolean started;
     private volatile boolean healing;
@@ -56,21 +56,22 @@ public class HPManager
         this.regenAmount = 20;
         this.started = false;
 
-        healTimer = new BukkitRunnable()
-        {
-            @Override
-            public void run()
+        healTimer = () -> {
+            if (this.healing)
             {
-                if (healing)
+                if (this.nowHP >= this.maxHP)
                 {
-                    nowHP++;
-                    team.getEntries().stream()
-                            .map(Bukkit::getPlayer)
-                            .filter(Objects::nonNull)
-                            .forEach(player -> {
-                                player.setHealth(nowHP);
-                            });
+                    this.healing = false;
+                    return;
                 }
+
+                nowHP++;
+                this.team.getEntries().stream()
+                        .map(Bukkit::getPlayer)
+                        .filter(Objects::nonNull)
+                        .forEach(player -> {
+                            player.setHealth(nowHP);
+                        });
             }
         };
     }
@@ -89,7 +90,7 @@ public class HPManager
 
         this.nowHP = this.maxHP;
 
-        healTimer.runTaskTimer(HitPointsSyncPlugin.instance, 0L, regenAmount);
+        healTimerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(HitPointsSyncPlugin.instance, healTimer, 0L, regenAmount);
         this.started = true;
     }
 
@@ -159,7 +160,8 @@ public class HPManager
     public void stop()
     {
         this.started = false;
-        this.healTimer.cancel();
+        Bukkit.getScheduler().cancelTask(healTimerId);
+
         HitPointsSyncPlugin.activeManagers.remove(name);
         if (HitPointsSyncPlugin.activeManagers.size() == 0)
         {
@@ -170,22 +172,28 @@ public class HPManager
         }
     }
 
-    class HealRunnable extends BukkitRunnable
+    class HealRunnable implements Runnable
     {
         public int time = 0;
         @Override
         public void run()
         {
             if (time > 3)
+            {
                 healing = false;
+                Bukkit.getScheduler().cancelTask(healRunnableId);
+            }
             else
                 time++;
         }
+
+
     }
 
     public HealRunnable healRunnable = new HealRunnable();
+    public int healRunnableId = -1;
 
-    public void regen(String regenner)
+    public void regen()
     {
         if (!this.started)
               return;
@@ -196,7 +204,7 @@ public class HPManager
         }
         healing = true;
 
-        healRunnable.runTaskTimer(HitPointsSyncPlugin.instance, 0L, 20L);
+        healRunnableId = Bukkit.getScheduler().scheduleSyncRepeatingTask(HitPointsSyncPlugin.instance, healRunnable, 0L, 40L);
 
     }
 

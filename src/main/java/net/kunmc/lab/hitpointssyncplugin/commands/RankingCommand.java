@@ -23,9 +23,6 @@ public class RankingCommand
             case "damage":
                 Ranking.show(Ranking.Mode.DAMAGE);
                 break;
-            case "regen":
-                Ranking.show(Ranking.Mode.REGEN);
-                break;
             case "none":
                 Bukkit.getScoreboardManager().getMainScoreboard().clearSlot(DisplaySlot.SIDEBAR);
             case "clear":
@@ -33,7 +30,7 @@ public class RankingCommand
                 sender.sendMessage(ChatColor.GREEN + "ランキングをクリアしました。");
                 break;
             default:
-                sender.sendMessage(ChatColor.RED + "不明なモードです。モード一覧：regen(回復), damage(ダメージ), none(表示しない), clear(ランキングをクリア)");
+                sender.sendMessage(ChatColor.RED + "不明なモードです。モード一覧：damage(ダメージ), none(表示しない), clear(ランキングをクリア)");
                 return;
         }
         sender.sendMessage(ChatColor.GREEN + "サイドバーに設定する項目を変更しました。");
