@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -161,6 +162,13 @@ public class HPManager
         this.started = false;
         this.healTimer.cancel();
         HitPointsSyncPlugin.activeManagers.remove(name);
+        if (HitPointsSyncPlugin.activeManagers.size() == 0)
+        {
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                player.sendMessage(ChatColor.RED + "全てのチームが脱落したためゲームが終了しました。");
+            });
+            HitPointsSyncPlugin.started = false;
+        }
     }
 
     class HealRunnable extends BukkitRunnable
