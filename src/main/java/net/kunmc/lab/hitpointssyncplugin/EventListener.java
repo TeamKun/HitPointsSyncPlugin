@@ -71,18 +71,7 @@ public class EventListener implements Listener
 
         if (manager == null || !manager.isStarted())
             return;
-
-        boolean regenSuccess = manager.regen(e.getEntity().getName(), e.getAmount());
-
-        if (!regenSuccess && e.getRegainReason() == EntityRegainHealthEvent.RegainReason.EATING)
-        {
-            e.getEntity().sendMessage(ChatColor.RED + "回復はクールダウン中です。");
-            e.setCancelled(true);
-            return;
-        }
-
-        if (!regenSuccess)
-            e.setCancelled(true);
+        manager.regen(e.getEntity().getName());
         e.setAmount(0);
     }
 

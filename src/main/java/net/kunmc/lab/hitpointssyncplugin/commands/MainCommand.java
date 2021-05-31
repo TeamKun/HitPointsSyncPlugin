@@ -43,7 +43,7 @@ public class MainCommand implements CommandExecutor, TabCompleter
             case "help":
                 sender.sendMessage(genHelpText("help", "このコマンドです。"));
                 sender.sendMessage(genHelpText("maxhp", "プレイヤの最大HPをセットします。"));
-                sender.sendMessage(genHelpText("healspeed", "1分間に回復するハートの数をセットします。"));
+                sender.sendMessage(genHelpText("healspeed", "何秒(少数可)に1HP回復するか"));
                 sender.sendMessage(genHelpText("register", "追跡するチームに追加します。"));
                 sender.sendMessage(genHelpText("ranking", "ランキング関連のコマンドです。"));
                 break;
@@ -56,19 +56,9 @@ public class MainCommand implements CommandExecutor, TabCompleter
                 MaxHPCommand.maxhp(sender, (String[]) ArrayUtils.remove(args, 0));
                 break;
             case "register":
-                if (HitPointsSyncPlugin.started)
-                {
-                    sender.sendMessage(ChatColor.RED + "エラー：既に開始しています。先に、/hpsync stop を実行してください。");
-                    return true;
-                }
                 RegisterCommand.register(sender, (String[]) ArrayUtils.remove(args, 0));
                 break;
             case "healspeed":
-                if (HitPointsSyncPlugin.started)
-                {
-                    sender.sendMessage(ChatColor.RED + "エラー：既に開始しています。先に、/hpsync stop を実行してください。");
-                    return true;
-                }
                 HealSpeed.healspeed(sender, (String[]) ArrayUtils.remove(args, 0));
                 break;
             case "start":
@@ -79,7 +69,10 @@ public class MainCommand implements CommandExecutor, TabCompleter
                 }
 
                 HitPointsSyncPlugin.started = true;
-                HitPointsSyncPlugin.managers.values().forEach(HPManager::start);
+                HitPointsSyncPlugin.managers.forEach((s, hpManager) -> {
+                    HitPointsSyncPlugin.activeManagers.add(s);
+                    hpManager.start();
+                });
                 sender.sendMessage(ChatColor.GREEN + "ゲームを開始しました。");
                 break;
             case "stop":

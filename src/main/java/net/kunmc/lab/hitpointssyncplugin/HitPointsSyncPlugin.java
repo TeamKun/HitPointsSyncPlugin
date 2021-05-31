@@ -5,13 +5,15 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public final class HitPointsSyncPlugin extends JavaPlugin
 {
     public static HashMap<String, HPManager> managers;
+    public static List<String> activeManagers;
 
     public static boolean started;
 
@@ -26,6 +28,7 @@ public final class HitPointsSyncPlugin extends JavaPlugin
         Bukkit.getPluginManager().registerEvents(new EventListener(), this);
 
         managers = new HashMap<>();
+        activeManagers = new ArrayList<>();
 
         managers.put("main", new HPManager(null));
 

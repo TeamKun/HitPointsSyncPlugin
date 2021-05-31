@@ -34,9 +34,16 @@ public class RegisterCommand
             return;
         }
 
-        HitPointsSyncPlugin.managers.put(team.getName(), new HPManager(team));
+        HPManager manager = new HPManager(team);
+        HitPointsSyncPlugin.managers.put(team.getName(), manager);
 
         sender.sendMessage(ChatColor.GREEN + "チームを " + team.getName() + " として登録しました。");
+
+        if (HitPointsSyncPlugin.started)
+        {
+            manager.start();
+            sender.sendMessage(ChatColor.GREEN + "ゲームが既に始まっているため、このチームのゲームを有効化しました。");
+        }
 
     }
 }

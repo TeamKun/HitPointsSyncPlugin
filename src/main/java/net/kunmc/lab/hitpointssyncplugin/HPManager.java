@@ -5,9 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.EntityEffect;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
@@ -24,15 +21,14 @@ public class HPManager
 
     private final String name;
     private final Team team;
-    private BossBar bar;
     private BukkitRunnable healTimer;
 
     private double maxHP;
-    private int regenPerMinute;
-    private int regendHP;
+    private int regenAmount;
     private double nowHP;
 
     private boolean started;
+    private volatile boolean healing;
 
     static
     {
@@ -57,17 +53,24 @@ public class HPManager
 
         this.maxHP = 20;
         this.nowHP = this.maxHP;
-        this.regendHP = 0;
+        this.regenAmount = 20;
         this.started = false;
-        this.bar = Bukkit.createBossBar("残り回復可能HP", BarColor.GREEN, BarStyle.SOLID);
 
         healTimer = new BukkitRunnable()
         {
             @Override
             public void run()
             {
-                regendHP = 0;
-                bar.setProgress(1.0);
+                if (healing)
+                {
+                    nowHP++;
+                    team.getEntries().stream()
+                            .map(Bukkit::getPlayer)
+                            .filter(Objects::nonNull)
+                            .forEach(player -> {
+                                player.setHealth(nowHP);
+                            });
+                }
             }
         };
     }
@@ -78,21 +81,15 @@ public class HPManager
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .forEach(player -> {
-                    this.bar.addPlayer(player);
                     player.setHealth(this.maxHP);
                     player.getAttribute(Attribute.GENERIC_MAX_HEALTH)
                             .setBaseValue(this.maxHP);
                 });
 
-        this.bar.setVisible(true);
-        if (getRegenPerMinute() == 0)
-            this.bar.setProgress(0.0);
-        else
-            this.bar.setProgress(1.0);
 
         this.nowHP = this.maxHP;
 
-        healTimer.runTaskTimer(HitPointsSyncPlugin.instance, 0L, 1200L);
+        healTimer.runTaskTimer(HitPointsSyncPlugin.instance, 0L, regenAmount);
         this.started = true;
     }
 
@@ -162,39 +159,36 @@ public class HPManager
     public void stop()
     {
         this.started = false;
-        this.bar.setVisible(false);
-        this.bar.removeAll();
-        this.regendHP = 0;
         this.healTimer.cancel();
+        HitPointsSyncPlugin.activeManagers.remove(name);
     }
 
-    public boolean regen(String regenner, double amount)
+    class HealRunnable extends BukkitRunnable
     {
-        if (!this.started || this.regendHP + amount > this.regenPerMinute)
-              return false;
-
-        double regenAmount = amount;
-
-        if (this.nowHP + amount > this.maxHP)
+        public volatile int time = 0;
+        @Override
+        public void run()
         {
-            this.regendHP += this.maxHP - this.nowHP;
-            regenAmount = this.maxHP - this.nowHP;
+            if (time > 3)
+                healing = false;
         }
-        else
-            this.regendHP += amount;
+    }
 
-        Ranking.push(Ranking.Mode.REGEN, regenner, (int) Math.round(amount));
+    public HealRunnable healRunnable = new HealRunnable();
 
-        double finalRegenAmount = regenAmount;
-        team.getEntries()
-                .forEach(s -> {
-                    Player player = Bukkit.getPlayer(s);
-                    if (player != null)
-                        player.setHealth(this.nowHP + finalRegenAmount);
-                });
+    public boolean regen(String regenner)
+    {
+        if (!this.started)
+              return false;
+        if (healing)
+        {
+            healRunnable.time = 0;
+            return true;
+        }
+        healing = true;
 
-        this.nowHP = this.nowHP + finalRegenAmount;
-        this.bar.setProgress(1.0 - ((double) regendHP / (double) regenPerMinute));
+        healRunnable.runTaskTimer(HitPointsSyncPlugin.instance, 0L, 20L);
+
         return true;
     }
 
@@ -206,20 +200,8 @@ public class HPManager
         player.playEffect(EntityEffect.HURT);
     }
 
-    public int getRegenPerMinute()
+    public void setRegenAmount(double regenAmount)
     {
-        return regenPerMinute;
-    }
-
-    public void setRegenPerMinute(int regenPerMinute)
-    {
-        double progress = this.bar.getProgress() * this.regenPerMinute;
-
-        this.regenPerMinute = regenPerMinute;
-
-        if (this.bar.getProgress() == 0.0 || regenPerMinute == 0.0)
-            return;
-
-        this.bar.setProgress(progress / (double) regenPerMinute);
+        this.regenAmount = (int) (regenAmount * 20d);
     }
 }
