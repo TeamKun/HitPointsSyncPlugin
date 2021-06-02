@@ -90,6 +90,9 @@ public class MainCommand implements CommandExecutor, TabCompleter
             case "ranking":
                 RankingCommand.ranking(sender, (String[]) ArrayUtils.remove(args, 0));
                 break;
+            case "regenlimit":
+                HealLimitCommand.regenpermt(sender, (String[]) ArrayUtils.remove(args, 0));
+                break;
             default:
                 sender.sendMessage(ChatColor.RED + "エラー：不明な引数です。/hpsync help をご利用ください。");
 

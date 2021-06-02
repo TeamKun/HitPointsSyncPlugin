@@ -5,10 +5,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.EntityEffect;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -21,11 +25,17 @@ public class HPManager
     private final String name;
     private final Team team;
     private Runnable healTimer;
+    private BossBar bar;
 
     private double maxHP;
     private int regenAmount;
+    private int regendHP;
+    private int regenPerMinute;
+    private Runnable healLimitTimer;
+    private int healLimitTimerid;
     private double nowHP;
     private int healTimerId = -1;
+
 
     private boolean started;
     private volatile boolean healing;
@@ -55,24 +65,33 @@ public class HPManager
         this.nowHP = this.maxHP;
         this.regenAmount = 20;
         this.started = false;
-
+        this.regenPerMinute = -1;
+        this.bar = Bukkit.createBossBar("残り回復可能HP", BarColor.GREEN, BarStyle.SOLID);
         healTimer = () -> {
             if (this.healing)
             {
-                if (this.nowHP >= this.maxHP)
+                if ((this.regendHP != -1 && this.regendHP > this.regenPerMinute) || this.nowHP >= this.maxHP)
                 {
                     this.healing = false;
                     return;
                 }
 
                 nowHP++;
+                regendHP++;
                 this.team.getEntries().stream()
                         .map(Bukkit::getPlayer)
                         .filter(Objects::nonNull)
                         .forEach(player -> {
                             player.setHealth(nowHP);
                         });
+
+                this.bar.setProgress(1.0 - ((double) regendHP / (double) regenPerMinute));
             }
+        };
+
+        healLimitTimer = () -> {
+            regendHP = 0;
+            bar.setProgress(1.0);
         };
     }
 
@@ -82,16 +101,40 @@ public class HPManager
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .forEach(player -> {
+                    this.bar.addPlayer(player);
                     player.setHealth(this.maxHP);
                     player.getAttribute(Attribute.GENERIC_MAX_HEALTH)
                             .setBaseValue(this.maxHP);
                 });
 
-
+        if (regenPerMinute != -1)
+            this.bar.setVisible(true);
+        if (getRegenPerMinute() < 0)
+            this.bar.setProgress(0.0);
+        else
+            this.bar.setProgress(1.0);
         this.nowHP = this.maxHP;
 
         healTimerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(HitPointsSyncPlugin.instance, healTimer, 0L, regenAmount);
+        healLimitTimerid = Bukkit.getScheduler().scheduleSyncRepeatingTask(HitPointsSyncPlugin.instance, healLimitTimer, 0L, 1200L);
         this.started = true;
+    }
+
+    public int getRegenPerMinute()
+    {
+        return regenPerMinute;
+    }
+
+    public void setRegenPerMinute(int regenPerMinute)
+    {
+        double progress = this.bar.getProgress() * this.regenPerMinute;
+
+        this.regenPerMinute = regenPerMinute;
+
+        if (this.bar.getProgress() == 0.0 || regenPerMinute == 0.0)
+            return;
+
+        this.bar.setProgress(progress / (double) regenPerMinute);
     }
 
     public boolean isStarted()
@@ -164,6 +207,12 @@ public class HPManager
             Bukkit.getScheduler().cancelTask(healTimerId);
         if (Bukkit.getScheduler().isQueued(healRunnableId))
             Bukkit.getScheduler().cancelTask(healRunnableId);
+        if (Bukkit.getScheduler().isQueued(healLimitTimerid))
+            Bukkit.getScheduler().cancelTask(healLimitTimerid);
+
+        this.bar.setVisible(false);
+        this.bar.removeAll();
+        this.regendHP = 0;
 
         HitPointsSyncPlugin.activeManagers.remove(name);
         if (HitPointsSyncPlugin.activeManagers.size() == 0)
