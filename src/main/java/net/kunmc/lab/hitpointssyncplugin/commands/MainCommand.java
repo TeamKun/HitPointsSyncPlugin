@@ -43,8 +43,9 @@ public class MainCommand implements CommandExecutor, TabCompleter
             case "help":
                 sender.sendMessage(genHelpText("help", "このコマンドです。"));
                 sender.sendMessage(genHelpText("maxhp", "プレイヤの最大HPをセットします。"));
-                sender.sendMessage(genHelpText("healspeed", "何秒(少数可)に1HP回復するか"));
+                sender.sendMessage(genHelpText("healspeed", "何秒(小数可)に1HP回復するか"));
                 sender.sendMessage(genHelpText("register", "追跡するチームに追加します。"));
+                sender.sendMessage(genHelpText("ranking", "ランキング関連のコマンドです。"));
                 sender.sendMessage(genHelpText("ranking", "ランキング関連のコマンドです。"));
                 break;
             case "maxhp":
