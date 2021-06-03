@@ -124,7 +124,7 @@ public class MainCommand implements CommandExecutor, TabCompleter
         switch (args.length)
         {
             case 1:
-                result.addAll(Arrays.asList("help", "maxhp", "register", "healspeed", "start", "stop", "ranking"));
+                result.addAll(Arrays.asList("help", "maxhp", "register", "healspeed", "start", "stop", "ranking", "heallimit"));
                 break;
             case 2:
                 switch (args[0])
@@ -136,6 +136,7 @@ public class MainCommand implements CommandExecutor, TabCompleter
                         break;
                     case "maxhp":
                     case "healspeed":
+                    case "heallimit":
                         result.addAll(HitPointsSyncPlugin.managers.keySet());
                         result.add("all");
                         result.add("*");
