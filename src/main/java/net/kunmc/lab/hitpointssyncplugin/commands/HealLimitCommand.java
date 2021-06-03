@@ -12,7 +12,13 @@ public class HealLimitCommand
         switch (args.length)
         {
             case 0:
-                sender.sendMessage(ChatColor.RED + "エラー：使用法が間違っています。使用法：/hpsync regenlimit [チーム名] <1分間に回復できる数(❤)>");
+                sender.sendMessage(ChatColor.GREEN + "現在の設定値：");
+
+                HitPointsSyncPlugin.managers.forEach((s, hpManager) -> {
+                    sender.sendMessage(ChatColor.GREEN + "    " + s + "：" + hpManager.getRegenPerMinute());
+                });
+
+                sender.sendMessage(ChatColor.GRAY + "コマンド使用法使用法：/hpsync regenlimit [チーム名] <1分間に回復できる数(❤)>");
                 sender.sendMessage(ChatColor.GRAY + "ノート：1分間に回復できる数を-1にセットすると無制限になります。");
                 return;
             case 1:

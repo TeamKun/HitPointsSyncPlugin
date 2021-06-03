@@ -279,4 +279,9 @@ public class HPManager
             Bukkit.getScheduler().cancelTask(healTimerId);
         healTimerId = Bukkit.getScheduler().scheduleSyncRepeatingTask(HitPointsSyncPlugin.instance, healTimer, 0L, this.regenAmount);
     }
+
+    public int getRegenAmount()
+    {
+        return regenAmount;
+    }
 }

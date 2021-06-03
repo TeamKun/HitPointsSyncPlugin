@@ -12,7 +12,13 @@ public class HealSpeed
         switch (args.length)
         {
             case 0:
-                sender.sendMessage(ChatColor.RED + "エラー：使用法が間違っています。使用法：/hpsync healspeed [チーム名] <n秒に1回回復>") ;
+                sender.sendMessage(ChatColor.GREEN + "現在の設定値：");
+
+                HitPointsSyncPlugin.managers.forEach((s, hpManager) -> {
+                    sender.sendMessage(ChatColor.GREEN + "    " + s + "：" + hpManager.getRegenAmount());
+                });
+
+                sender.sendMessage(ChatColor.GRAY + "コマンド使用法：/hpsync healspeed [チーム名] <n秒に1回回復>") ;
                 return;
             case 1:
                 Double num = Utils.parseDouble(args[0]);

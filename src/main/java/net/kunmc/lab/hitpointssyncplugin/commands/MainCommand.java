@@ -46,14 +46,9 @@ public class MainCommand implements CommandExecutor, TabCompleter
                 sender.sendMessage(genHelpText("healspeed", "何秒(小数可)に1HP回復するか"));
                 sender.sendMessage(genHelpText("register", "追跡するチームに追加します。"));
                 sender.sendMessage(genHelpText("ranking", "ランキング関連のコマンドです。"));
-                sender.sendMessage(genHelpText("ranking", "ランキング関連のコマンドです。"));
+                sender.sendMessage(genHelpText("regenlimit", "1分間に回復する量を定義します。-1で無制限です。"));
                 break;
             case "maxhp":
-                if (HitPointsSyncPlugin.started)
-                {
-                    sender.sendMessage(ChatColor.RED + "エラー：既に開始しています。先に、/hpsync stop を実行してください。");
-                    return true;
-                }
                 MaxHPCommand.maxhp(sender, (String[]) ArrayUtils.remove(args, 0));
                 break;
             case "register":
