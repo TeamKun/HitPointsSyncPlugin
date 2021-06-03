@@ -62,6 +62,9 @@ public class MainCommand implements CommandExecutor, TabCompleter
             case "healspeed":
                 HealSpeed.healspeed(sender, (String[]) ArrayUtils.remove(args, 0));
                 break;
+            case "heallimit":
+                HealLimitCommand.regenpermt(sender, (String[]) ArrayUtils.remove(args, 0));
+                break;
             case "start":
                 if (HitPointsSyncPlugin.started)
                 {
