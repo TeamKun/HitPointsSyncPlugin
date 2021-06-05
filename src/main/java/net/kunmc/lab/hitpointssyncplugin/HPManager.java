@@ -128,6 +128,12 @@ public class HPManager
     {
         double progress = this.bar.getProgress() * this.regenPerMinute;
 
+        if (this.regenPerMinute == -1)
+        {
+            this.regenPerMinute = regenPerMinute;
+            return;
+        }
+
         this.regenPerMinute = regenPerMinute;
 
         if (this.bar.getProgress() == 0.0 || regenPerMinute == 0.0)
