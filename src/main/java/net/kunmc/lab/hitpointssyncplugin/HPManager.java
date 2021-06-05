@@ -69,7 +69,7 @@ public class HPManager
         healTimer = () -> {
             if (this.healing)
             {
-                if ((this.regendHP != -1 && this.regendHP > this.regenPerMinute) || this.nowHP >= this.maxHP)
+                if ((this.regenPerMinute != -1 && this.regendHP > this.regenPerMinute) || this.nowHP >= this.maxHP)
                 {
                     this.healing = false;
                     return;
@@ -84,6 +84,8 @@ public class HPManager
                             player.setHealth(nowHP);
                         });
 
+                if (regenPerMinute == -1)
+                    return;
                 this.bar.setProgress(1.0 - ((double) regendHP / (double) regenPerMinute));
             }
         };
