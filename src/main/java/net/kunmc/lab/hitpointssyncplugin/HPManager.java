@@ -126,20 +126,9 @@ public class HPManager
 
     public void setRegenPerMinute(int regenPerMinute)
     {
-        double progress = this.bar.getProgress() * this.regenPerMinute;
-
-        if (this.regenPerMinute == -1)
-        {
-            this.regenPerMinute = regenPerMinute;
-            return;
-        }
-
         this.regenPerMinute = regenPerMinute;
-
-        if (this.bar.getProgress() == 0.0 || regenPerMinute == 0.0)
-            return;
-
-        this.bar.setProgress(progress / (double) regenPerMinute);
+        this.regendHP = 0;
+        this.bar.setProgress(1.0);
     }
 
     public boolean isStarted()
