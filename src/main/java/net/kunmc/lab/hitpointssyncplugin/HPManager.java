@@ -102,7 +102,8 @@ public class HPManager
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .forEach(player -> {
-                    this.bar.addPlayer(player);
+                    if (regenPerMinute != -1)
+                        this.bar.addPlayer(player);
                     player.setHealth(this.maxHP);
                     player.getAttribute(Attribute.GENERIC_MAX_HEALTH)
                             .setBaseValue(this.maxHP);
