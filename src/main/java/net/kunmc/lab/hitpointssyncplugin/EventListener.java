@@ -18,7 +18,7 @@ public class EventListener implements Listener
 
         HPManager manager = Utils.getManager(e.getPlayer());
 
-        if (manager == null)
+        if (e.getPlayer().getScoreboard().getEntryTeam(e.getPlayer().getName()) == null)
         {
             Bukkit.getScoreboardManager().getMainScoreboard().getTeam("main").addEntry(e.getPlayer().getName());
             manager = Utils.getManager(e.getPlayer());
