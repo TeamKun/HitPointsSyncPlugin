@@ -137,7 +137,6 @@ public class MainCommand implements CommandExecutor, TabCompleter
                         result.add("*");
                         break;
                     case "ranking":
-                        result.add("regen");
                         result.add("damage");
                         result.add("none");
                         result.add("clear");
