@@ -28,7 +28,7 @@ public class RegisterCommand
             return;
         }
 
-        if (HitPointsSyncPlugin.managers.get(team.getName()) == null)
+        if (HitPointsSyncPlugin.managers.get(team.getName()) != null)
         {
             sender.sendMessage(ChatColor.RED + "エラー：チームは既に登録されています。");
             return;
