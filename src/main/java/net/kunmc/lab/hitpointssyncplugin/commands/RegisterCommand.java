@@ -14,7 +14,7 @@ public class RegisterCommand
     {
         if (args.length == 0)
         {
-            sender.sendMessage(ChatColor.RED + "エラー：使用法が間違っています。使用法：/hpsync maxhp [チーム名] <最大HP(ハート数)>") ;
+            sender.sendMessage(ChatColor.RED + "エラー：使用法が間違っています。使用法：/hpsync register <チーム名>") ;
             return;
         }
 
