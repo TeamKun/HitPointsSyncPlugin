@@ -18,9 +18,9 @@ public class MaxHPCommand
                     sender.sendMessage(ChatColor.GREEN + "    " + s + "：" + hpManager.getMaxHP());
                 });
 
-                sender.sendMessage(ChatColor.GRAY + "コマンド使用法：/hpsync maxhp [チーム名] <最大HP(ハート数)>") ;
+                sender.sendMessage(ChatColor.GRAY + "コマンド使用法：/hpsync maxhp <チーム名> <最大HP(ハート数)>") ;
                 return;
-            case 1:
+            /*case 1:
                 Double num = Utils.parseDouble(args[0]);
                 if (num == null)
                     sender.sendMessage(ChatColor.RED + "エラー：引数が数字ではありません。");
@@ -35,9 +35,9 @@ public class MaxHPCommand
                     HitPointsSyncPlugin.managers.get("main").setMaxHP(num * 2);
                     sender.sendMessage(ChatColor.GREEN + "メインチームのプレイヤの最大HPを " + num + " にセットしました。");
                 }
-                return;
+                return;*/
             case 2:
-                num = Utils.parseDouble(args[1]);
+                Double num = Utils.parseDouble(args[1]);
                 if (num == null)
                     sender.sendMessage(ChatColor.RED + "エラー：引数が数字ではありません。");
                 else

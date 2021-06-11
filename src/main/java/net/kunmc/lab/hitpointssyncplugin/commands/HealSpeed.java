@@ -18,9 +18,9 @@ public class HealSpeed
                     sender.sendMessage(ChatColor.GREEN + "    " + s + "：" + hpManager.getRegenAmount());
                 });
 
-                sender.sendMessage(ChatColor.GRAY + "コマンド使用法：/hpsync healspeed [チーム名] <n秒に1回回復>") ;
+                sender.sendMessage(ChatColor.GRAY + "コマンド使用法：/hpsync healspeed [チーム名] <n Tickに1回回復>") ;
                 return;
-            case 1:
+            /*case 1:
                 Double num = Utils.parseDouble(args[0]);
                 if (num == null)
                     sender.sendMessage(ChatColor.RED + "エラー：引数が数字ではありません。");
@@ -29,9 +29,9 @@ public class HealSpeed
                     HitPointsSyncPlugin.managers.get("main").setRegenAmount(num);
                     sender.sendMessage(ChatColor.GREEN + "メインチームの回復レートを " + num + " にセットしました。");
                 }
-                return;
+                return;*/
             case 2:
-                num = Utils.parseDouble(args[0]);
+                Integer num = Utils.parseInt(args[0]);
                 if (num == null)
                     sender.sendMessage(ChatColor.RED + "エラー：引数が数字ではありません。");
                 else

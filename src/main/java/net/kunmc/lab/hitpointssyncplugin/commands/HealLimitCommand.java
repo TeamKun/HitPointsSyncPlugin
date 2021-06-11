@@ -18,10 +18,10 @@ public class HealLimitCommand
                     sender.sendMessage(ChatColor.GREEN + "    " + s + "：" + hpManager.getRegenPerMinute());
                 });
 
-                sender.sendMessage(ChatColor.GRAY + "コマンド使用法使用法：/hpsync regenlimit [チーム名] <1分間に回復できる数(❤)>");
+                sender.sendMessage(ChatColor.GRAY + "コマンド使用法使用法：/hpsync regenlimit <チーム名> <1分間に回復できる数(❤)>");
                 sender.sendMessage(ChatColor.GRAY + "ノート：1分間に回復できる数を-1にセットすると無制限になります。");
                 return;
-            case 1:
+            /*case 1:
                 Integer num = Utils.parseInt(args[0]);
                 if (num == null)
                     sender.sendMessage(ChatColor.RED + "エラー：引数が数字ではありません。");
@@ -30,9 +30,9 @@ public class HealLimitCommand
                     HitPointsSyncPlugin.managers.get("main").setRegenPerMinute(num);
                     sender.sendMessage(ChatColor.GREEN + "メインチームの回復制限を " + num + " にセットしました。");
                 }
-                return;
+                return;*/
             case 2:
-                num = Utils.parseInt(args[1]);
+                Integer num = Utils.parseInt(args[1]);
                 if (num == null)
                     sender.sendMessage(ChatColor.RED + "エラー：引数が数字ではありません。");
                 else

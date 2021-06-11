@@ -266,9 +266,9 @@ public class HPManager
         player.playEffect(EntityEffect.HURT);
     }
 
-    public void setRegenAmount(double regenAmount)
+    public void setRegenAmount(int regenAmount)
     {
-        this.regenAmount = (int) (regenAmount * 20d);
+        this.regenAmount = regenAmount;
 
         if (!started)
             return;
