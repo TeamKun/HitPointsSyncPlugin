@@ -49,6 +49,7 @@ public class MainCommand implements CommandExecutor, TabCompleter
                 sender.sendMessage(genHelpText("register", "追跡するチームに追加します。"));
                 sender.sendMessage(genHelpText("ranking", "ランキング関連のコマンドです。"));
                 sender.sendMessage(genHelpText("heallimit", "1分間に回復する量を定義します。-1で無制限です。"));
+                sender.sendMessage(genHelpText("nonstop", "死亡時継続モードを設定します。"));
                 break;
             case "maxhp":
                 MaxHPCommand.maxhp(sender, (String[]) ArrayUtils.remove(args, 0));
@@ -93,6 +94,8 @@ public class MainCommand implements CommandExecutor, TabCompleter
             case "regenlimit":
                 HealLimitCommand.regenpermt(sender, (String[]) ArrayUtils.remove(args, 0));
                 break;
+            case "nonstop":
+                NonStop.nonStop(sender, (String[]) ArrayUtils.remove(args, 0));
             default:
                 sender.sendMessage(ChatColor.RED + "エラー：不明な引数です。/hpsync help をご利用ください。");
 
@@ -121,7 +124,7 @@ public class MainCommand implements CommandExecutor, TabCompleter
         switch (args.length)
         {
             case 1:
-                result.addAll(Arrays.asList("help", "maxhp", "register", "healspeed", "start", "stop", "ranking", "heallimit"));
+                result.addAll(Arrays.asList("help", "maxhp", "register", "healspeed", "start", "stop", "ranking", "heallimit", "nonstop"));
                 break;
             case 2:
                 switch (args[0])
@@ -129,6 +132,7 @@ public class MainCommand implements CommandExecutor, TabCompleter
                     case "register":
                         result.addAll(Bukkit.getScoreboardManager().getMainScoreboard().getTeams().stream()
                                 .map(Team::getName)
+                                .filter(s -> !HitPointsSyncPlugin.managers.containsKey(s))
                                 .collect(Collectors.toList()));
                         break;
                     case "maxhp":
@@ -142,6 +146,14 @@ public class MainCommand implements CommandExecutor, TabCompleter
                         result.add("none");
                         result.add("clear");
                         break;
+                }
+                break;
+            case 3:
+                switch (args[0])
+                {
+                    case "nonstop":
+                        result.add("true");
+                        result.add("false");
                 }
         }
 

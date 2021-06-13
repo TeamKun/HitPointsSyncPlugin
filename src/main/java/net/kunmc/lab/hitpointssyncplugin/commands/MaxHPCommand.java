@@ -19,7 +19,7 @@ public class MaxHPCommand
                     sender.sendMessage(ChatColor.GREEN + "    " + s + "：" + hpManager.getMaxHP());
                 });
 
-                sender.sendMessage(ChatColor.GRAY + "コマンド使用法：/hpsync maxhp <チーム名> <最大HP(ハート数)>") ;
+                sender.sendMessage(ChatColor.GRAY + "コマンド使用法：/hpsync maxhp <チーム名> <最大HP(ハート数)>");
                 return;
             /*case 1:
                 Double num = Utils.parseDouble(args[0]);

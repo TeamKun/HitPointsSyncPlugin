@@ -35,9 +35,10 @@ public class HPManager
     private double nowHP;
     private int healTimerId = -1;
 
-
     private boolean started;
     private volatile boolean healing;
+
+    private boolean nonStop;
 
     static
     {
@@ -62,6 +63,7 @@ public class HPManager
 
         this.maxHP = 20;
         this.nowHP = this.maxHP;
+        this.nonStop = true;
         this.regenAmount = 20;
         this.started = false;
         this.regenPerMinute = -1;
@@ -179,7 +181,12 @@ public class HPManager
             this.nowHP = 0;
 
             Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.RED + team.getName() + " チームは、" + damager.getName() + "が負ったダメージで全滅した。"));
-            stop();
+
+            if (isNonStop())
+                takeOver();
+            else
+                stop();
+            return;
         }
 
         this.nowHP = nowHP - amount;
@@ -282,4 +289,33 @@ public class HPManager
     {
         return regenAmount;
     }
+
+
+    public boolean isNonStop()
+    {
+        return nonStop;
+    }
+
+    public void setNonStop(boolean nonStop)
+    {
+        this.nonStop = nonStop;
+    }
+
+    private void takeOver()
+    {
+        team.getEntries()
+                .forEach(s -> {
+                    Player player = Bukkit.getPlayer(s);
+                    if (player == null)
+                        return;
+                    player.setHealth(getMaxHP());
+                    if (player.isDead())
+                        player.spigot().respawn();
+                });
+
+        this.nowHP = getMaxHP();
+
+        this.regendHP = 0;
+    }
+
 }
