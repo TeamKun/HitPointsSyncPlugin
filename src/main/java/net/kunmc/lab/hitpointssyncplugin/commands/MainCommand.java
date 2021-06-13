@@ -136,7 +136,6 @@ public class MainCommand implements CommandExecutor, TabCompleter
                     case "heallimit":
                         result.addAll(HitPointsSyncPlugin.managers.keySet());
                         result.add("all");
-                        result.add("*");
                         break;
                     case "ranking":
                         result.add("damage");
