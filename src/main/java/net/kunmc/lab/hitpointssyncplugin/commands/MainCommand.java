@@ -96,6 +96,7 @@ public class MainCommand implements CommandExecutor, TabCompleter
                 break;
             case "nonstop":
                 NonStop.nonStop(sender, (String[]) ArrayUtils.remove(args, 0));
+                break;
             default:
                 sender.sendMessage(ChatColor.RED + "エラー：不明な引数です。/hpsync help をご利用ください。");
 
@@ -154,6 +155,8 @@ public class MainCommand implements CommandExecutor, TabCompleter
                     case "nonstop":
                         result.add("true");
                         result.add("false");
+                        result.add("on");
+                        result.add("off");
                 }
         }
 
