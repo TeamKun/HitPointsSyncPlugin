@@ -12,6 +12,7 @@ public class HealLimitCommand
         switch (args.length)
         {
             case 0:
+            case 1:
                 sender.sendMessage(ChatColor.GREEN + "現在の設定値：");
 
                 HitPointsSyncPlugin.managers.forEach((s, hpManager) -> {
