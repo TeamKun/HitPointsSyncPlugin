@@ -310,11 +310,11 @@ public class HPManager
                     if (player == null)
                         return;
                     player.sendTitle(ChatColor.RED + "YOU DIED!", ChatColor.GREEN + "復活中...", 10, 20, 10);
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 255, 2));
                 });
 
         new BukkitRunnable()
         {
-
             @Override
             public void run()
             {
@@ -324,9 +324,10 @@ public class HPManager
                             Player player = Bukkit.getPlayer(s);
                             if (player == null)
                                 return;
-                            player.setHealth(getMaxHP());
+                            player.removePotionEffect(PotionEffectType.BLINDNESS);
                             if (player.isDead())
                                 player.spigot().respawn();
+                            //player.setHealth(getMaxHP());
                         });
             }
         }.runTaskLater(HitPointsSyncPlugin.instance, 10L);
