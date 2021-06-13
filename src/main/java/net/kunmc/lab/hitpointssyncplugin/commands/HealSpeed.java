@@ -32,7 +32,7 @@ public class HealSpeed
                 }
                 return;*/
             case 2:
-                Integer num = Utils.parseInt(args[0]);
+                Integer num = Utils.parseInt(args[1]);
                 if (num == null)
                     sender.sendMessage(ChatColor.RED + "エラー：引数が数字ではありません。");
                 else
