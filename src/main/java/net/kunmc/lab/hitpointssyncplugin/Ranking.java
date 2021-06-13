@@ -12,7 +12,6 @@ public class Ranking
     public static Scoreboard mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 
     public static Objective damage;
-    public static Objective regen;
 
     static {
         init();
@@ -26,18 +25,14 @@ public class Ranking
 
     public static void show(Mode mode)
     {
-        switch (mode)
-        {
-            case DAMAGE:
-                damage.setDisplaySlot(DisplaySlot.SIDEBAR);
-                break;
-        }
+        if (mode == Mode.DAMAGE)
+            damage.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
     public static void clear()
     {
+        if (damage != null)
         damage.unregister();
-        regen.unregister();
         init();
     }
 
