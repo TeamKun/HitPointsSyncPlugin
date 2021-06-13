@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -308,10 +309,27 @@ public class HPManager
                     Player player = Bukkit.getPlayer(s);
                     if (player == null)
                         return;
-                    player.setHealth(getMaxHP());
-                    if (player.isDead())
-                        player.spigot().respawn();
+                    player.sendTitle(ChatColor.RED + "YOU DIED!", ChatColor.GREEN + "復活中...", 10, 20, 10);
                 });
+
+        new BukkitRunnable()
+        {
+
+            @Override
+            public void run()
+            {
+
+                team.getEntries()
+                        .forEach(s -> {
+                            Player player = Bukkit.getPlayer(s);
+                            if (player == null)
+                                return;
+                            player.setHealth(getMaxHP());
+                            if (player.isDead())
+                                player.spigot().respawn();
+                        });
+            }
+        }.runTaskLater(HitPointsSyncPlugin.instance, 10L);
 
         this.nowHP = getMaxHP();
 
