@@ -139,6 +139,7 @@ public class MainCommand implements CommandExecutor, TabCompleter
                     case "maxhp":
                     case "healspeed":
                     case "heallimit":
+                    case "nonstop":
                         result.addAll(HitPointsSyncPlugin.managers.keySet());
                         result.add("all");
                         break;
