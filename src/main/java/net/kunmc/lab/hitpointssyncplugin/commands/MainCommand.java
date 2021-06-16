@@ -153,10 +153,13 @@ public class MainCommand implements CommandExecutor, TabCompleter
                 switch (args[0])
                 {
                     case "nonstop":
-                        result.add("true");
-                        result.add("false");
                         result.add("on");
                         result.add("off");
+                        break;
+                    case "heallimit":
+                    case "healspeed":
+                    case "maxhp":
+                        result.add("<整数値>");
                 }
         }
 

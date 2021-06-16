@@ -16,20 +16,18 @@ public class NonStop
                 sender.sendMessage(ChatColor.GREEN + "    " + s + "：" + (hpManager.isNonStop() ? "有効": "無効"));
             });
 
-            sender.sendMessage(ChatColor.GRAY + "コマンド使用法：/hpsync nonstop <チーム名> <true|false|on|off>");
+            sender.sendMessage(ChatColor.GRAY + "コマンド使用法：/hpsync nonstop <チーム名> <on|off>");
             return;
         }
 
-        if (!(args[1].equalsIgnoreCase("true") ||
-                args[1].equalsIgnoreCase("on") ||
-                args[1].equalsIgnoreCase("false") ||
+        if (!(args[1].equalsIgnoreCase("on") ||
                 args[1].equalsIgnoreCase("off")))
         {
-            sender.sendMessage(ChatColor.RED + "エラー：不明な引数です。第2引数は true|false|on|off のみを受け入れます。");
+            sender.sendMessage(ChatColor.RED + "エラー：不明な引数です。第2引数は on|off のみを受け入れます。");
             return;
         }
 
-        boolean isNonstop = Boolean.parseBoolean(args[1]) || args[1].equalsIgnoreCase("on");
+        boolean isNonstop = args[1].equalsIgnoreCase("on");
 
 
         if (args[0].equals("*") || args[0].equals("all"))
